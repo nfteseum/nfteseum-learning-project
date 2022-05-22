@@ -12,7 +12,6 @@ import (
 	"github.com/go-chi/cors"
 	"github.com/go-chi/httplog"
 	"github.com/go-chi/httprate"
-	"github.com/nfteseum/nfteseum-learning-project/api"
 	"github.com/nfteseum/nfteseum-learning-project/api/config"
 	"github.com/nfteseum/nfteseum-learning-project/api/proto"
 	"github.com/rs/zerolog"
@@ -181,11 +180,6 @@ func (s *RPC) corsHandler() func(next http.Handler) http.Handler {
 		Handler
 }
 
-// Ping is a healthcheck that returns an empty message.
-func (s *RPC) Ping(ctx context.Context) (bool, error) {
-	return true, nil
-}
-
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("."))
 }
@@ -194,14 +188,4 @@ func stubHandler(respBody string) http.HandlerFunc {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte(respBody))
 	})
-}
-
-// Version returns service version details
-func (s *RPC) Version(ctx context.Context) (*proto.Version, error) {
-	return &proto.Version{
-		WebrpcVersion: proto.WebRPCVersion(),
-		SchemaVersion: proto.WebRPCSchemaVersion(),
-		SchemaHash:    proto.WebRPCSchemaHash(),
-		AppVersion:    api.GITCOMMIT,
-	}, nil
 }
