@@ -1,0 +1,22 @@
+webrpc = v1
+
+name = nfteseum-api
+version = v0.0.1
+
+message Version
+  - webrpcVersion: string
+  - schemaVersion: string
+  - schemaHash: string
+  - appVersion: string
+
+
+
+##
+## API public methods
+##
+service API
+  #
+  # Runtime
+  #
+  - Ping() => (status: bool)
+  - Version() => (version: Version)
