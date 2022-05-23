@@ -37,6 +37,20 @@ type LoggingConfig struct {
 	Concise bool   `toml:"concise"`
 }
 
+type DBConfig struct {
+	Host     string `toml:"host"`
+	Database string `toml:"database"`
+	Username string `toml:"username"`
+	Password string `toml:"password"`
+}
+
+func (cfg *Config) DBString() string {
+	if cfg.Mode == DevelopmentMode {
+		return fmt.Sprintf("postgres://%s:%s@%s:5432/%s?sslmode=disable", cfg.DB.Username, cfg.DB.Password, cfg.DB.Host, cfg.DB.Database)
+	}
+	return fmt.Sprintf("postgres://%s:%s@%s:5432/%s", cfg.DB.Username, cfg.DB.Password, cfg.DB.Host, cfg.DB.Database)
+}
+
 type Auth struct {
 	JWTSecret string `toml:"jwt_secret"`
 }

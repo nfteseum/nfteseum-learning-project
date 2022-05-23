@@ -1,0 +1,39 @@
+CREATE DOMAIN url AS text
+CHECK (VALUE ~ 'https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#()?&//=]*)');
+ 
+COMMENT ON DOMAIN url IS 'match URLs (http or https)';
+
+
+CREATE TABLE IF NOT EXISTS users (
+    addr CHAR(42) UNIQUE NOT NULL,
+    admin BOOLEAN DEFAULT FALSE,
+    name VARCHAR(32) NOT NULL,
+    pfp url,
+    random_msg TEXT NOT NULL,
+    PRIMARY KEY (addr)
+);
+
+CREATE TABLE IF NOT EXISTS posts (
+    id SERIAL NOT NULL,
+    contract_addr CHAR(64) NOT NULL,
+    token_id INTEGER NOT NULL,
+    like_count INTEGER DEFAULT 0,
+    comment_count INTEGER DEFAULT 0,
+    author CHAR(64) NOT NULL REFERENCES users(addr) ON DELETE NO ACTION ON UPDATE NO ACTION,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (id)
+);
+
+CREATE TABLE IF NOT EXISTS comments (
+    id SERIAL NOT NULL PRIMARY KEY,
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    author CHAR(64) NOT NULL REFERENCES users(addr) ON DELETE CASCADE ON UPDATE NO ACTION,
+    content TEXT NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE IF NOT EXISTS likes (
+    id SERIAL NOT NULL PRIMARY KEY,
+    post_id INTEGER NOT NULL REFERENCES posts(id) ON DELETE CASCADE ON UPDATE NO ACTION,
+    liked_by CHAR(64) NOT NULL REFERENCES users(addr) ON DELETE CASCADE ON UPDATE NO ACTION
+);

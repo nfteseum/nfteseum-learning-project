@@ -1,19 +1,19 @@
 .PHONY: postgres createdb dropdb migrate_up migrate_down migrate_create sqlc_generate run proto
 
 postgres:
-	docker run --name postgres12 -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d postgres:12-alpine
+	docker run --name skyweaverpostgres -p 5432:5432 -e POSTGRES_USER=postgres -e POSTGRES_PASSWORD=postgres -d postgres:12-alpine
 
 createdb:
-	docker exec -it postgres12 createdb --username=postgres --owner=postgres nfteseum
+	docker exec -it skyweaverpostgres createdb --username=postgres --owner=postgres nfteseum
 
 dropdb:
-	docker exec -it postgres12 dropdb -U postgres nfteseum
+	docker exec -it skyweaverpostgres dropdb -U postgres nfteseum
 
 migrate_up:
-	go run -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate -source file://data/migrations -database postgres://admin:password@localhost:5432/nfteseum?sslmode=disable up
+	go run -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate -source file://data/migrations -database postgres://postgres:postgres@localhost:5432/nfteseum?sslmode=disable up
 
 migrate_down:
-	go run -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate  -source file://data/migrations -database postgres://admin:password@localhost:5432/nfteseum?sslmode=disable down 1
+	go run -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate  -source file://data/migrations -database postgres://postgres:postgres@localhost:5432/nfteseum?sslmode=disable down 1
 
 migrate_create:
 	go run -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate create -ext sql -dir data/migrations -seq $(FILE_NAME)

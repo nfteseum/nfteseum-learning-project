@@ -10,6 +10,7 @@ import (
 	"github.com/go-chi/httplog"
 	"github.com/nfteseum/nfteseum-learning-project/api"
 	"github.com/nfteseum/nfteseum-learning-project/api/config"
+	"github.com/nfteseum/nfteseum-learning-project/api/data"
 	"github.com/nfteseum/nfteseum-learning-project/api/rpc"
 	"github.com/rs/zerolog"
 	"golang.org/x/sync/errgroup"
@@ -45,6 +46,10 @@ func NewServer(cfg *config.Config) (*Server, error) {
 	//
 	// Database
 	//
+	err = data.PrepareDB(cfg)
+	if err != nil {
+		return nil, err
+	}
 
 	// WebRPC Server
 	rpc, err := rpc.NewRPC(cfg, logger)
