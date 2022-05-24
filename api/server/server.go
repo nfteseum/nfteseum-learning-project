@@ -73,7 +73,8 @@ func (s *Server) Run() error {
 	if s.IsRunning() {
 		return fmt.Errorf("server already running")
 	}
-	// defer s.Stop()
+
+	defer s.Stop()
 
 	oplog := s.Logger.With().Str("op", "run").Logger()
 	oplog.Info().Msgf("=> run service")
